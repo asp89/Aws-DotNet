@@ -21,7 +21,7 @@ namespace InvocationPayloadFix
         public string FunctionHandler(string input, ILambdaContext context)
         {
             var fileData = s3.ReadJson<DummyData>().GetAwaiter().GetResult();
-            var s3fileUrl = s3.GeneratePreSignedURL(fileData);
+            var s3fileUrl = s3.GeneratePreSignedURL(fileData).GetAwaiter().GetResult();
             context.Logger.Log($"Received input: {input}");
             return s3fileUrl;
         }

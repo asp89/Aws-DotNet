@@ -53,8 +53,9 @@ namespace InvocationPayloadFix
             }
         }
 
-        public string GeneratePreSignedURL(DummyData data)
+        public async Task<string> GeneratePreSignedURL(DummyData data)
         {
+            await WriteJson(data);
             string urlString = string.Empty;
             try
             {
@@ -62,7 +63,8 @@ namespace InvocationPayloadFix
                 {
                     BucketName = bucket,
                     Key = objectKey,
-                    Expires = DateTime.UtcNow.AddHours(duration)
+                    Verb = HttpVerb.GET,
+                    Expires = DateTime.UtcNow.AddHours(1)
                 };
                 urlString = client.GetPreSignedURL(request);
             }
@@ -75,6 +77,30 @@ namespace InvocationPayloadFix
                 Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
             }
             return urlString;
+        }
+
+        private async Task WriteObject(string key, byte[] bytes, string contentType)
+        {
+            using (var memStream = new MemoryStream(bytes))
+            {
+                var request = new PutObjectRequest
+                {
+                    BucketName = bucket,
+                    Key = key,
+                    InputStream = memStream,
+                    ContentType = contentType,
+                };
+                await client.PutObjectAsync(request);
+            }
+        }
+
+        private Task WriteJson(object obj)
+        {
+            return WriteObject(
+                    key: objectKey,
+                    bytes: Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj, Formatting.Indented)),
+                    contentType: "application/json"
+                );
         }
 
         private T Deserialize<T>(byte[] bytes) =>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace InvocationPayloadFix
 {
@@ -13,6 +14,8 @@ namespace InvocationPayloadFix
         private readonly AmazonS3Client client;
         private const string bucket = "my-learners-bucket";
         private const string fileName = "data.json";
+        private const string objectKey = "resultSet.json";
+        private const double duration = 12;
 
         public AwsS3()
         {
@@ -48,6 +51,30 @@ namespace InvocationPayloadFix
                     contentType: response.Headers["Content-Type"]
                 );
             }
+        }
+
+        public string GeneratePreSignedURL(DummyData data)
+        {
+            string urlString = string.Empty;
+            try
+            {
+                GetPreSignedUrlRequest request = new GetPreSignedUrlRequest
+                {
+                    BucketName = bucket,
+                    Key = objectKey,
+                    Expires = DateTime.UtcNow.AddHours(duration)
+                };
+                urlString = client.GetPreSignedURL(request);
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Message:'{0}' when writing an object", e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+            }
+            return urlString;
         }
 
         private T Deserialize<T>(byte[] bytes) =>

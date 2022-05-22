@@ -15,7 +15,7 @@ namespace S3Operations
     {
         private readonly AmazonDynamoDBClient client;
         private readonly DynamoDBContext context;
-        private const string EventTableName = "events";
+        private const string EventTableName = "events-trigger";
         public SNSOperations SNSOperations = new SNSOperations();
         public DynamoDBOperations()
         {

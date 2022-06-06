@@ -38,6 +38,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "ElastiCacheApp",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-ElastiCacheApp",
+            "program": "${workspaceFolder}/ElastiCacheApp/bin/Debug/net6.0/ElastiCacheApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/ElastiCacheApp",
+            "console": "externalTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Experimental",
             "type": "coreclr",
             "request": "launch",

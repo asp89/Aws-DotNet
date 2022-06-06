@@ -10,24 +10,23 @@ namespace ElastiCacheApp
 {
     public class ConsoleApp
     {
-        RedisConnector RedisConnector;
         Dictionary<string, List<int>> Map;
-        public ConsoleApp(RedisConnector rdc)
+        public ConsoleApp()
         {
-            RedisConnector = rdc;
+            
         }
 
         public async Task Run()
         {
             try
             {
-                var obj = new object { };
                 using (StreamReader r = new StreamReader("~data.json"))
                 {
                     string json = r.ReadToEnd();
                     Map = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(json);
                 }
 
+                RedisConnector.HashSet(Map,"dummy-data-1");
             }
             catch (Exception e)
             {

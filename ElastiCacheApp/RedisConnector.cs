@@ -1,23 +1,21 @@
-using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
 namespace ElastiCacheApp
 {
-    public static class RedisConnector
+    public static class RedisConnector_old
     {
         public static IDatabase GetDatabase()
         {
             IDatabase databaseReturn = null;
-            string connectionString = "learn-elasticache-redis.iuqtrz.clustercfg.use2.cache.amazonaws.com:6379";
+            // string connectionString = "learn-elasticache-redis.iuqtrz.clustercfg.use2.cache.amazonaws.com:6379";
+            string connectionString = "localhost:6379";
             var connectionMultiplexer = ConnectionMultiplexer.Connect(connectionString);
             if (connectionMultiplexer.IsConnected)
                 databaseReturn = connectionMultiplexer.GetDatabase();
@@ -115,13 +113,13 @@ namespace ElastiCacheApp
                 objJSON = Encoding.UTF8.GetString(ms.ToArray());
             }
 
-            RedisConnector.Set(objName, objJSON);
+            RedisConnector_old.Set(objName, objJSON);
         }
 
         public static T GetComplexObject<T>(string objName)
         {
             var ser = new DataContractJsonSerializer(typeof(T));
-            var redisObj = RedisConnector.Get(objName);
+            var redisObj = RedisConnector_old.Get(objName);
             using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(redisObj.ToString())))
             {
                 var processedObj = (T)ser.ReadObject(ms);
@@ -145,15 +143,15 @@ namespace ElastiCacheApp
 
                 lstStrJSON.Add(objJSON);
             }
-            RedisConnector.Set(objName, lstStrJSON);
+            RedisConnector_old.Set(objName, lstStrJSON);
         }
 
         public static List<T> GetComplexList<T>(string objName)
         {
             //Getting a list of complex objects from Redis
-            if (RedisConnector.GetDatabase() != null)
+            if (RedisConnector_old.GetDatabase() != null)
             {
-                var lstObj = (List<string>)RedisConnector.Get(objName);
+                var lstObj = (List<string>)RedisConnector_old.Get(objName);
                 List<T> lstRetrievedObj = new List<T>();
                 var ser = new DataContractJsonSerializer(typeof(T));
 

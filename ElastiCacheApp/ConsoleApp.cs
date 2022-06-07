@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Text;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace ElastiCacheApp
 {
     public class ConsoleApp
     {
+        Redis Redis;
         Dictionary<string, List<int>> Map;
-        public ConsoleApp()
+        public ConsoleApp(Redis redis)
         {
-            
+            Redis = redis;
         }
 
         public async Task Run()
@@ -25,8 +25,11 @@ namespace ElastiCacheApp
                     string json = r.ReadToEnd();
                     Map = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(json);
                 }
+                Redis.SetDictionary<List<int>>(Map);
+                var dictionaryKeys = Redis.GetDictionaryKeys();
+                var map = Redis.GetValuesByKeys<List<int>>(dictionaryKeys);
 
-                RedisConnector.HashSet(Map,"dummy-data-1");
+                Console.WriteLine(map.ElementAt(0));
             }
             catch (Exception e)
             {

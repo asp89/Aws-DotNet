@@ -1,3 +1,12 @@
+# $stackname="sampleMigration3"
+# $awsregion="us-east-2"
+# $template="serverless.template"
+# $buildtemplate=".aws-sam\build\template.yaml"
+# $s3Bucket="aws-sam-cli-managed-default-samclisourcebucket-wmweg9sr1pxe"
+# $capabilitiesIAM="CAPABILITY_IAM" 
+# $configFile="samconfig.toml" 
+# $configEnv="default"
+
 $stackname=""
 $awsregion=""
 $template=""

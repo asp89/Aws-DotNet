@@ -9,27 +9,28 @@ namespace ElastiCacheApp
 {
     public class ConsoleApp
     {
-        Redis Redis;
+        ServiceStackRedis ServiceStackRedis;
         Dictionary<string, List<int>> Map;
-        public ConsoleApp(Redis redis)
+        public ConsoleApp(ServiceStackRedis serviceStackredis)
         {
-            Redis = redis;
+            ServiceStackRedis = serviceStackredis;
         }
 
         public async Task Run()
         {
             try
             {
-                using (StreamReader r = new StreamReader("~data.json"))
-                {
-                    string json = r.ReadToEnd();
-                    Map = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(json);
-                }
-                Redis.SetDictionary<List<int>>(Map);
-                var dictionaryKeys = Redis.GetDictionaryKeys();
-                var map = Redis.GetValuesByKeys<List<int>>(dictionaryKeys);
+               // Deserialise the json file.
+                Map = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(File.ReadAllText(@"~data.json"));
 
-                Console.WriteLine(map.ElementAt(0));
+                // Set the data in redis.
+                ServiceStackRedis.SetDictionary<List<int>>(Map);
+
+                // Fetch the keys.
+                var keys = ServiceStackRedis.GetDictionaryKeys();
+
+                // Fetch all key-value pairs by keys.
+                var allKeysValues = ServiceStackRedis.GetValuesByKeys<List<int>>(keys);
             }
             catch (Exception e)
             {

@@ -1,17 +1,14 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using ServiceStack.Redis;
 
 namespace ElastiCacheApp
 {
-    public class Redis
+    public class ServiceStackRedis
     {
         private const string redisConnectionString = "localhost:6379";
 
-        public Redis()
+        public ServiceStackRedis()
         {
 
         }
@@ -52,8 +49,6 @@ namespace ElastiCacheApp
 
         public Dictionary<string, T> GetValuesByKeys<T>(List<string> keys)
         {
-            // Dictionary<string, T> GetValuesMap<T>
-            // var result = new Dictionary<string, List<int>>();
             var result = new Dictionary<string, T>();
             try
             {

@@ -7,17 +7,66 @@ namespace ElastiCacheApp
     public class ServiceStackRedis
     {
         private const string redisConnectionString = "localhost:6379";
+        private RedisClient redisClient;
 
         public ServiceStackRedis()
         {
 
         }
 
+        public string GetClient()
+        {
+            var client = string.Empty;
+            try
+            {
+                using (redisClient = new RedisClient(redisConnectionString))
+                {
+                    client = redisClient.GetClient();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            return client;
+        }
+
+        public string GetConfig()
+        {
+            var config = string.Empty;
+            try
+            {
+                using (redisClient = new RedisClient(redisConnectionString))
+                {
+                    config = redisClient.GetConfig(redisConnectionString);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            return config;
+        }
+
+        public int GetCount()
+        {
+            int result = 0;
+            try
+            {
+                result = GetDictionaryKeys().Count;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            return result;
+        }
+
         public void SetDictionary<T>(Dictionary<string, T> map)
         {
             try
             {
-                using (RedisClient redisClient = new RedisClient(redisConnectionString))
+                using (redisClient = new RedisClient(redisConnectionString))
                 {
                     redisClient.SetAll<T>(map);
                     Console.WriteLine("---Set All Executed---");
@@ -34,7 +83,7 @@ namespace ElastiCacheApp
             var result = new List<string>();
             try
             {
-                using (RedisClient redisClient = new RedisClient(redisConnectionString))
+                using (redisClient = new RedisClient(redisConnectionString))
                 {
                     result = redisClient.GetAllKeys();
                     Console.WriteLine("---Fetched All Keys---");
@@ -52,8 +101,8 @@ namespace ElastiCacheApp
             var result = new Dictionary<string, T>();
             try
             {
-                using (RedisClient redisClient = new RedisClient(redisConnectionString))
-                {                    
+                using (redisClient = new RedisClient(redisConnectionString))
+                {
                     result = redisClient.GetValuesMap<T>(keys);
                     Console.WriteLine("---Fetched All Keys and Values---");
                 }
@@ -63,6 +112,21 @@ namespace ElastiCacheApp
                 Console.WriteLine(e.ToString());
             }
             return result;
+        }
+    
+        public void DeleteAllKeys<T>()
+        {
+            try
+            {
+                using (redisClient = new RedisClient(redisConnectionString))
+                {
+                    redisClient.DeleteAll<T>();
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
     }
 }

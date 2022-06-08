@@ -13,6 +13,7 @@
     <PackageReference Include="ServiceStack.Redis" Version="6.1.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.5.61" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.5" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Core" Version="8.0.5" />
   </ItemGroup>
 
 </Project>

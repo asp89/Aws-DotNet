@@ -13,19 +13,17 @@ namespace ElastiCacheApp
     {
         public StackExchangeRedis()
         {
-            
+
         }
         public IDatabase GetDatabase()
         {
-            IDatabase databaseReturn = null;
+            IDatabase database = null;
             string connectionString = "localhost:6379";
             var connectionMultiplexer = ConnectionMultiplexer.Connect(connectionString);
             if (connectionMultiplexer.IsConnected)
-                databaseReturn = connectionMultiplexer.GetDatabase();
+                database = connectionMultiplexer.GetDatabase();
 
-            return databaseReturn;
+            return database;
         }
-
-        
     }
 }

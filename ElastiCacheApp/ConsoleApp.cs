@@ -23,8 +23,13 @@ namespace ElastiCacheApp
             try
             {
                 // Remove all the keys
-                ServiceStackRedis.DeleteAllKeys<Task>();
+                // ServiceStackRedis.DeleteAllKeys<Task>();
+                Console.WriteLine("---Removing all keys by fetching all keys---");
+                ServiceStackRedis.DeleteAllByKeys(
+                    ServiceStackRedis.GetDictionaryKeys()
+                );
 
+                Console.WriteLine($"---Dictionary Count Check- {ServiceStackRedis.GetDictionaryKeys().Count}");
                 // Start the process to save all the keys
                 Store.Start();
 

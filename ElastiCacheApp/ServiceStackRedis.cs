@@ -128,5 +128,13 @@ namespace ElastiCacheApp
                 Console.WriteLine(e.ToString());
             }
         }
+
+        public void DeleteAllByKeys(List<string> keys)
+        {
+            using (redisClient = new RedisClient(redisConnectionString))
+            {
+                redisClient.RemoveAll(keys);
+            }
+        }
     }
 }

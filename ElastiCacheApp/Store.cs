@@ -110,9 +110,9 @@ namespace ElastiCacheApp
         void ReadItems(Action<string, int> onRow)
         {
             var tempData = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(File.ReadAllText(@"~data.json"));
-            foreach(var item in tempData)
+            foreach (var item in tempData)
             {
-                foreach(var i in item.Value)
+                foreach (var i in item.Value)
                 {
                     onRow(item.Key, i);
                 }
@@ -123,7 +123,17 @@ namespace ElastiCacheApp
         {
             try
             {
-                ServiceStackRedis.SetDictionary<List<int>>(Map);
+                var listDictionaries = new List<Dictionary<string, List<int>>>();
+                int redisSegment = 1000;
+                decimal numberOfGroups = Map.Count / redisSegment;
+                int groupSize = Convert.ToInt32(Math.Ceiling(Map.Count / numberOfGroups));
+
+                for (int i = 1; i <= numberOfGroups; i++)
+                {
+                    int startIndex = (i - 1) * groupSize;
+                    var dict = Map.Skip(startIndex).Take(groupSize).ToDictionary(kv => kv.Key, kv => kv.Value);
+                    listDictionaries.Add(dict);
+                }
             }
             catch (Exception e)
             {

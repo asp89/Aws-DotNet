@@ -26,8 +26,8 @@ namespace ElastiCacheApp
             services
                 .AddSingleton<ConsoleApp>()
                 .AddSingleton<ServiceStackRedis>()
+                .AddSingleton<StackExchangeRedis>()
                 .AddSingleton<Store>()
-                .AddSingleton<Util>()
             ;
         }
     }

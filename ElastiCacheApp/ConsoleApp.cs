@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
 
 namespace ElastiCacheApp
 {
@@ -11,7 +7,6 @@ namespace ElastiCacheApp
     {
         ServiceStackRedis ServiceStackRedis;
         Store Store;
-        // Dictionary<string, List<int>> Map;
         public ConsoleApp(ServiceStackRedis serviceStackredis, Store store)
         {
             ServiceStackRedis = serviceStackredis;
@@ -22,28 +17,7 @@ namespace ElastiCacheApp
         {
             try
             {
-                // Remove all the keys
-                // ServiceStackRedis.DeleteAllKeys<Task>();
-                Console.WriteLine("---Removing all keys by fetching all keys---");
-                ServiceStackRedis.DeleteAllByKeys(
-                    ServiceStackRedis.GetDictionaryKeys()
-                );
-
-                Console.WriteLine($"---Dictionary Count Check- {ServiceStackRedis.GetDictionaryKeys().Count}");
-                // Start the process to save all the keys
-                Store.Start();
-
-                // Deserialise the json file.
-                // Map = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(File.ReadAllText(@"~data.json"));
-
-                // Set the data in redis.
-                // ServiceStackRedis.SetDictionary<List<int>>(Map);
-
-                // Fetch the keys.
-                // var keys = ServiceStackRedis.GetDictionaryKeys();
-
-                // Fetch all key-value pairs by keys.
-                // var allKeysValues = ServiceStackRedis.GetValuesByKeys<List<int>>(keys);
+                Store.Start();                
             }
             catch (Exception e)
             {

@@ -1,35 +1,34 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace ElastiCacheApp
 {
     public class Store
     {
-        Util Util;
-        ServiceStackRedis ServiceStackRedis;
+        StackExchangeRedis StackExchangeRedis;
         Dictionary<string, List<int>> Map;
+        private const string cacheKey = "Map";
 
-        public Store(ServiceStackRedis serviceStackRedis, Util upc)
+        public Store(StackExchangeRedis stackExchangeRedis)
         {
-            ServiceStackRedis = serviceStackRedis;
-            Util = upc;
+            StackExchangeRedis = stackExchangeRedis;
+            Map = new Dictionary<string, List<int>>();
+            // Map = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(File.ReadAllText(@"~data.json"));
         }
 
         public async void Start()
         {
-            TryLoadLastMap();
-
             while (true)
             {
                 try
                 {
-                    RefreshMap();
+                    TryLoadLastMap();
                     TrySaveLastMap();
                 }
                 catch (Exception e)
@@ -37,18 +36,18 @@ namespace ElastiCacheApp
                     Console.WriteLine("refresh product map");
                     Console.WriteLine(e.ToString());
                 }
-                await Task.Delay(TimeSpan.FromMinutes(1));
+                await Task.Delay(TimeSpan.FromMinutes(5));
             }
         }
 
-        void TryLoadLastMap()
+        async void TryLoadLastMap()
         {
             try
             {
-                if (ServiceStackRedis.GetCount() > 0)
+                var cachkeyValue = await StackExchangeRedis.GetAsync(cacheKey);
+                if(!String.IsNullOrEmpty(cachkeyValue))
                 {
-                    var keys = ServiceStackRedis.GetDictionaryKeys();
-                    var map = ServiceStackRedis.GetValuesByKeys<List<int>>(keys);
+                    var map = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(cachkeyValue);;
                     SetMap(map);
                 }
             }
@@ -59,80 +58,15 @@ namespace ElastiCacheApp
             }
         }
 
-        void RefreshMap()
-        {
-            if (Environment.GetEnvironmentVariable("ProductStore.NeverRefresh") != null)
-            {
-                if (Map == null)
-                {
-                    Dictionary<string, List<int>> emptyMap = new Dictionary<string, List<int>>();
-                    SetMap(emptyMap);
-                }
-            }
-
-            // don't keep running the query while developing
-            if (Map != null && Environment.GetEnvironmentVariable("ProductStore.NoRefresh") != null)
-                return;
-
-            Dictionary<string, List<int>> map = new Dictionary<string, List<int>>();
-            void addItem(string upc, int productId)
-            {
-                if (IsValidUpc(upc))
-                {
-                    if (productId == 0)
-                    {
-                        // null productId -> if upc is not present, add upc with empty list
-                        if (!map.ContainsKey(upc))
-                            map.Add(upc, new List<int>());
-                    }
-                    else
-                    {
-                        // not null productId
-                        if (map.TryGetValue(upc, out List<int> list))
-                        {
-                            // if product not present, add productid to the list
-                            if (!list.Contains(productId))
-                                list.Add(productId);
-                        }
-                        else
-                        {
-                            // add upc with list containing the single productId
-                            map.Add(upc, new List<int> { productId });
-                        }
-                    }
-                }
-            }
-            Console.WriteLine("init reload of product map");
-            ReadItems(addItem);
-            SetMap(map);
-        }
-
-        void ReadItems(Action<string, int> onRow)
-        {
-            var tempData = JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(File.ReadAllText(@"~data.json"));
-            foreach (var item in tempData)
-            {
-                foreach (var i in item.Value)
-                {
-                    onRow(item.Key, i);
-                }
-            }
-        }
-
-        void TrySaveLastMap()
+        async void TrySaveLastMap()
         {
             try
             {
-                var listDictionaries = new List<Dictionary<string, List<int>>>();
-                int redisSegment = 1000;
-                decimal numberOfGroups = Map.Count / redisSegment;
-                int groupSize = Convert.ToInt32(Math.Ceiling(Map.Count / numberOfGroups));
-
-                for (int i = 1; i <= numberOfGroups; i++)
+                if (Map.Count > 0)
                 {
-                    int startIndex = (i - 1) * groupSize;
-                    var dict = Map.Skip(startIndex).Take(groupSize).ToDictionary(kv => kv.Key, kv => kv.Value);
-                    listDictionaries.Add(dict);
+                    Console.WriteLine("---Saving value as a string---");
+                    var map = JsonConvert.SerializeObject(Map, Formatting.Indented);
+                    await StackExchangeRedis.SetAsync(cacheKey, map);
                 }
             }
             catch (Exception e)
@@ -157,11 +91,6 @@ namespace ElastiCacheApp
                 lock (this)
                     Monitor.PulseAll(this);
             }
-        }
-
-        bool IsValidUpc(string code)
-        {
-            return Util.IsValid(code);
         }
     }
 }

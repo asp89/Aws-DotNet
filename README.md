@@ -1,2 +1,2 @@
 # Aws-DotNet
-Implementing AWS services with DotNet Core.
+Implementing AWS services with .NET Core.

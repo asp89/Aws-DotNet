@@ -14,7 +14,7 @@ namespace InvocationPayloadFix
         private readonly AmazonS3Client client;
         private const string bucket = "my-learners-bucket";
         private const string fileName = "data.json";
-        private const string objectKey = "resultSet";
+        private const string objectKey = "resultSet.json";
         private const double duration = 12;
 
         public AwsS3()
@@ -62,9 +62,9 @@ namespace InvocationPayloadFix
                 GetPreSignedUrlRequest request = new GetPreSignedUrlRequest
                 {
                     BucketName = bucket,
-                    Key = $"{objectKey}/{DateTime.Now.Ticks}.json",
+                    Key = objectKey,
                     Verb = HttpVerb.GET,
-                    Expires = DateTime.UtcNow.AddMinutes(1)
+                    Expires = DateTime.UtcNow.AddHours(1)
                 };
                 urlString = client.GetPreSignedURL(request);
             }
@@ -97,7 +97,7 @@ namespace InvocationPayloadFix
         private Task WriteJson(object obj)
         {
             return WriteObject(
-                    key: $"{objectKey}/{DateTime.Now.Ticks}.json",
+                    key: objectKey,
                     bytes: Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj, Formatting.Indented)),
                     contentType: "application/json"
                 );

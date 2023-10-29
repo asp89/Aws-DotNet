@@ -1,8 +1,4 @@
-using System;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Amazon.Lambda.Core;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
@@ -18,10 +14,10 @@ namespace InvocationPayloadFix
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public string FunctionHandler(string input, ILambdaContext context)
+        public async Task<string> FunctionHandler(string input, ILambdaContext context)
         {
-            var fileData = s3.ReadJson<DummyData>().GetAwaiter().GetResult();
-            var s3fileUrl = s3.GeneratePreSignedURL(fileData).GetAwaiter().GetResult();
+            var fileData = await s3.ReadJson<DummyData>();
+            var s3fileUrl = await s3.GeneratePreSignedURL(fileData);
             context.Logger.Log($"Received input: {input}");
             return s3fileUrl;
         }

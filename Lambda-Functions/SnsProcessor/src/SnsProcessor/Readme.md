@@ -1,14 +1,18 @@
-# AWS Lambda Simple SNS Function Project
+# AWS Lambda Project- SNS Process Logger
 
-This starter project consists of:
+The basic agenda of the project is to consume services and develop a basic understanding on serverless services. The function handler is the lambda entry point that focuses on the performing a simple operation. It logs SNS topic activity in the DynamoDB. The lambda function is triggered on SNS topic activity. It destructures SNS event and saves it in a DynamoDB table.
+
+Consumed AWS services- 
+* Lambda
+* SNS
+* DynamoDB
+
+This project consists of:
 * Function.cs - class file containing a class with a single function handler method
 * aws-lambda-tools-defaults.json - default argument settings for use with Visual Studio and command line deployment tools for AWS
+* DynamoDb.cs - Primarily responsible for dynamo database operations.
+* Models.cs - Contains model classes.
 
-You may also have a test project depending on the options selected.
-
-The generated function handler responds to events on an Amazon SNS service.
-
-After deploying your function you must configure an Amazon SNS service as an event source to trigger your Lambda function.
 
 ## Here are some steps to follow from Visual Studio:
 

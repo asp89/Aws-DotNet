@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace InvokeLambdaApp
+namespace ElastiCacheApp
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             try
             {
@@ -19,12 +19,15 @@ namespace InvokeLambdaApp
             {
                 Console.WriteLine(ex.Message);
             }
-        }        
+        }
 
         private static void ConfigureServices(IServiceCollection services)
         {
             services
                 .AddSingleton<ConsoleApp>()
+                .AddSingleton<ServiceStackRedis>()
+                .AddSingleton<StackExchangeRedis>()
+                .AddSingleton<Store>()
             ;
         }
     }

@@ -14,18 +14,6 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "CloudWatch",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-cloudWatch",
-            "program": "${workspaceFolder}/CloudWatch/bin/Debug/net6.0/CloudWatch.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/CloudWatch",
-            "console": "externalTerminal",
-            "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
             "name": "DynamoDB",
             "type": "coreclr",
             "request": "launch",
@@ -144,6 +132,23 @@
             "console": "externalTerminal",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "DynamoDB.API",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Containers/DynamoDb.API/bin/Debug/net7.0/DynamoDb.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Containers/DynamoDb.API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
         },
     ]
 }

@@ -131,5 +131,41 @@
             ],
             "problemMatcher": "$msCompile"
         },
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+              "build",
+              "${workspaceFolder}/Containers/DynamoDb.API/DynamoDb.API.csproj",
+              "/property:GenerateFullPaths=true",
+              "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+          },
+          {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+              "publish",
+              "${workspaceFolder}/Containers/DynamoDb.API/DynamoDb.API.csproj",
+              "/property:GenerateFullPaths=true",
+              "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+          },
+          {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+              "watch",
+              "run",
+              "--project",
+              "${workspaceFolder}/Containers/DynamoDb.API/DynamoDb.API.csproj",
+            ],
+            "problemMatcher": "$msCompile"
+          }
     ]
 }
